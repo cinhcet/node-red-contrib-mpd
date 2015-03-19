@@ -3,7 +3,8 @@
   "version": "0.0.3",
   "description": "A node-red node to control a mpd server and receive status updates from the server like the current played song",
   "keywords": [
-    "node-red"
+    "node-red",
+	"mpd"
   ],
   "author": "Danny Drieß, cinhcet@gmail.com",
   "license": "Apache-2.0",
