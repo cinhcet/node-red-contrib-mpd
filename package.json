@@ -18,9 +18,7 @@
   
   "node-red": {
     "nodes": {
-      "mpd in": "mpd/mpd.js",
-	  "mpd out": "mpd/mpd.js",
-	  "mpd-server": "mpd/mpd.js"
+      "mpd": "mpd/mpd.js"
     }
   }
 }
