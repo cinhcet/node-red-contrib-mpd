@@ -21,5 +21,5 @@ Just specify the ip of your mpd-server and port in the config node.
  
 ## Todo
 - [ ] Timeout when connection lost
-- [ ] node status
+- [x] node status
 - [ ] more documentation, examples
