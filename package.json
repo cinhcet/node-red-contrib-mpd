@@ -1,6 +1,6 @@
 {
   "name": "node-red-contrib-mpd",
-  "version": "0.0.5",
+  "version": "1.0.0",
   "description": "A node-red node to control a mpd server and receive status updates from the server like the current played song",
   "keywords": [
     "node-red",
