@@ -20,27 +20,27 @@
 <!-- Config node for the connection to the mpd server -->
 
 <script type="text/x-red" data-template-name="mpd-server">
-	<div class="form-row">
-		<label for="node-config-input-host"><i class="icon-bookmark"></i> Host</label>
-		<input type="text" id="node-config-input-host">
-	</div>
-	<div class="form-row">
-		<label for="node-config-input-port"><i class="icon-bookmark"></i> Port</label>
-		<input type="text" id="node-config-input-port">
-	</div>
+    <div class="form-row">
+        <label for="node-config-input-host"><i class="icon-bookmark"></i> Host</label>
+        <input type="text" id="node-config-input-host">
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-port"><i class="icon-bookmark"></i> Port</label>
+        <input type="text" id="node-config-input-port">
+    </div>
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('mpd-server',{
-		category: 'config',
-		defaults: {
-			host: {value:"localhost", required:true},
-			port: {value:6600, required:true, validate:RED.validators.number()},
-		},
-		label: function() {
-			return this.host+":"+this.port;
-		}
-	});
+    RED.nodes.registerType('mpd-server',{
+        category: 'config',
+        defaults: {
+            host: {value:"localhost", required:true},
+            port: {value:6600, required:true, validate:RED.validators.number()},
+        },
+        label: function() {
+            return this.host+":"+this.port;
+        }
+    });
 </script>
 
 
@@ -49,51 +49,51 @@
 <!-- MPD Out Node --> 
 
 <script type="text/x-red" data-template-name="mpd out">
-	<div class="form-row">
-		<label for="node-input-server"><i class="fa fa-globe"></i> Mpd Server</label>
-		<input type="text" id="node-input-server">
-	</div>
-	<div class="form-row">
-		<label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-		<input type="text" id="node-input-topic" placeholder="Topic">
-	</div>
-	<div class="form-row">
-		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-		<input type="text" id="node-input-name" placeholder="Name">
-	</div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-globe"></i> Mpd Server</label>
+        <input type="text" id="node-input-server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="mpd out">
-	<p>A MPD output Node</p>
-	<p>Can be used to send commands to an MPD server. The Payload should be
-		a string of a mpd command without options.
-		See <a href='http://www.musicpd.org/doc/protocol/command_reference.html' target="_blank">MPD reference</a>
-		for details. If you want to send a command WITH options, the message
-		object should contain a property 'options', where you can define options. The option
-		property should be an array, containing the options.
-		The returned message from the mpd server (if there is one) is send in the payload with the specified topic.
-	</p>
+    <p>A MPD output Node</p>
+    <p>Can be used to send commands to an MPD server. The Payload should be
+        a string of a mpd command without options.
+        See <a href='http://www.musicpd.org/doc/protocol/command_reference.html' target="_blank">MPD reference</a>
+        for details. If you want to send a command WITH options, the message
+        object should contain a property 'options', where you can define options. The option
+        property should be an array, containing the options.
+        The returned message from the mpd server (if there is one) is send in the payload with the specified topic.
+    </p>
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('mpd out',{
-		category: 'output',      
-		defaults: {            
-			name: {value:""},   
-			topic: {value:""},
-			server: {value:"", type:"mpd-server"},
-		},
-		color: "#3FADB5",
-		inputs:1,
-		outputs:1,
-		icon: "music.png",
-		label: function() {
-			return this.name||this.topic||"MPD out";
-		},
-		labelStyle: function() {
-			return this.name?"node_label_italic":"";
-		}
-	});
+    RED.nodes.registerType('mpd out',{
+        category: 'output',      
+        defaults: {            
+            name: {value:""},   
+            topic: {value:""},
+            server: {value:"", type:"mpd-server"},
+        },
+        color: "#3FADB5",
+        inputs:1,
+        outputs:1,
+        icon: "music.png",
+        label: function() {
+            return this.name||this.topic||"MPD out";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
 </script>
 
 
@@ -103,44 +103,44 @@
 <!-- MPD In Node --> 
 
 <script type="text/x-red" data-template-name="mpd in">
-	<div class="form-row">
-		<label for="node-input-server"><i class="fa fa-globe"></i> Mpd Server</label>
-		<input type="text" id="node-input-server">
-	</div>
-	<div class="form-row">
-		<label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
-		<input type="text" id="node-input-topic" placeholder="Topic">
-	</div>
-	<div class="form-row">
-		<label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
-		<input type="text" id="node-input-name" placeholder="Name">
-	</div>
+    <div class="form-row">
+        <label for="node-input-server"><i class="fa fa-globe"></i> Mpd Server</label>
+        <input type="text" id="node-input-server">
+    </div>
+    <div class="form-row">
+        <label for="node-input-topic"><i class="fa fa-tasks"></i> Topic</label>
+        <input type="text" id="node-input-topic" placeholder="Topic">
+    </div>
+    <div class="form-row">
+        <label for="node-input-name"><i class="fa fa-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
 </script>
 
 <script type="text/x-red" data-help-name="mpd in">
-	<p>A MPD input Node</p>
-	<p>
-		Whenever the status of the mpd server changes, this node outputs the status of the mpd server.
-	</p>
+    <p>A MPD input Node</p>
+    <p>
+        Whenever the status of the mpd server changes, this node outputs the status of the mpd server.
+    </p>
 </script>
 
 <script type="text/javascript">
-	RED.nodes.registerType('mpd in',{
-		category: 'input',      
-		defaults: {            
-			name: {value:""},   
-			topic: {value:""},
-			server: {value:"", type:"mpd-server"},
-		},
-		color: "#3FADB5",
-		inputs:0,
-		outputs:1,
-		icon: "music.png",
-		label: function() {
-			return this.name||this.topic||"MPD in";
-		},
-		labelStyle: function() {
-			return this.name?"node_label_italic":"";
-		}
-	});
+    RED.nodes.registerType('mpd in',{
+        category: 'input',      
+        defaults: {            
+            name: {value:""},   
+            topic: {value:""},
+            server: {value:"", type:"mpd-server"},
+        },
+        color: "#3FADB5",
+        inputs:0,
+        outputs:1,
+        icon: "music.png",
+        label: function() {
+            return this.name||this.topic||"MPD in";
+        },
+        labelStyle: function() {
+            return this.name?"node_label_italic":"";
+        }
+    });
 </script>
