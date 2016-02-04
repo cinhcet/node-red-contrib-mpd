@@ -31,48 +31,56 @@ module.exports = function(RED) {
         node.port = n.port;
         node.connected = false;
         
-        var id = "[" + node.host + ":" + node.port + "]";
-        
-        if(connections[id] == null) {
+        connectToMPD(node);
+    }
+    RED.nodes.registerType("mpd-server",MpdServerNode);
+
+    MpdServerNode.prototype.close = function() {
+        this.client.socket.destroy();
+        this.disconnect();
+    }
+
+    MpdServerNode.prototype.disconnect = function() {
+        var id = this.getID()
+        if(connections[id] != null) {
+            connections[id].instances -= 1;
+            if(connections[id].instances == 0) {
+                connections[id].socket.destroy();
+                delete connections[id];
+            }
+        }
+    }
+
+    MpdServerNode.prototype.getID = function() {
+        return "[" + this.host + ":" + this.port + "]";
+    }
+
+    function connectToMPD(node) {
+        var id = node.getID();
+        if(typeof connections[id] == "undefined" || connections[id] == null) {
             connections[id] = mpd.connect({port: node.port, host: node.host});
             var connection = connections[id];
             connection.instances = 0;
             
             connection.on('error', function(err) { 
-                util.log('[MPD] - Error: Connetcion problem? Is the mpd-server '  + node.host + ':' + node.port + ' running? \n Error code: ' + err);
+                node.log('Error: Connetcion problem? Is the mpd-server '  + node.host + ':' + node.port + ' running? \n Error code: ' + err);
             });
             connection.on('ready', function() {
-                util.log('[MPD] - Connected to MPD server ' + node.host + ':' + node.port);
+                node.log('Connected to MPD server ' + node.host + ':' + node.port);
                 node.connected = true;
             });
             connection.on('end', function() {
-                util.log('[MPD] - Disconnected to MPD server '  + node.host + ':' + node.port);
+                node.log('Disconnected to MPD server '  + node.host + ':' + node.port);
                 node.connected = false;
-                /**setTimeout(function() {
-					console.log('ti');
-                    connections[id] = mpd.connect({port: node.port, host: node.host});
-                }, 3000);*/
+                setTimeout(function() {
+                    node.disconnect();
+                    connectToMPD(node);
+                }, 1000);
             });
         }
         connections[id].instances += 1;
         node.client = connections[id];
-        
-        node.disconnect = function() {
-            if(connections[id] != null) {
-                connections[id].instances -= 1;
-                if(connections[id].instances == 0) {
-                    connections[id].socket.destroy();
-                    delete connections[id];
-                }
-            }
-        }
-        
-        this.on("close", function() {
-            node.client.socket.destroy();
-            connections = {};
-        });
     }
-    RED.nodes.registerType("mpd-server",MpdServerNode);
     
     
     
@@ -93,9 +101,10 @@ module.exports = function(RED) {
                 node.server.client.sendCommand(mpd.cmd(msg.payload, options), function(err, msg) {
                     if(err) {
                         util.log('[MPD] - ' + err);
+                        return;
                     }
                     var message = {};
-                    message.payload = mpd.parseArrayMessage(msg);;
+                    message.payload = mpd.parseArrayMessage(msg);
                     message.topic = node.topic;
                     if(message.payload) {
                         node.send(message);
