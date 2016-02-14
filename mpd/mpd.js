@@ -17,8 +17,9 @@
 module.exports = function(RED) {
     "use strict";
     var mpd = require('mpd');
-    var util = require('util');
-    
+    var events = require('events');
+     
+   
     //The connections to multiple mpd servers are stored here.
     var connections = {}; 
     
@@ -31,6 +32,8 @@ module.exports = function(RED) {
         node.port = n.port;
         node.connected = false;
         
+        node.eventEmitter = new events.EventEmitter();
+    
         connectToMPD(node);
     }
     RED.nodes.registerType("mpd-server",MpdServerNode);
@@ -68,10 +71,12 @@ module.exports = function(RED) {
             connection.on('ready', function() {
                 node.log('Connected to MPD server ' + node.host + ':' + node.port);
                 node.connected = true;
+                node.eventEmitter.emit('connected');
             });
             connection.on('end', function() {
                 node.log('Disconnected to MPD server '  + node.host + ':' + node.port);
                 node.connected = false;
+                node.eventEmitter.emit('disconnected');
                 setTimeout(function() {
                     node.disconnect();
                     connectToMPD(node);
@@ -100,7 +105,7 @@ module.exports = function(RED) {
                 }
                 node.server.client.sendCommand(mpd.cmd(msg.payload, options), function(err, msg) {
                     if(err) {
-                        util.log('[MPD] - ' + err);
+                        node.log('[MPD] - ' + err);
                         return;
                     }
                     var message = {};
@@ -113,13 +118,12 @@ module.exports = function(RED) {
             }
         });
         
-        node.server.client.on('ready', function() {
+        node.server.eventEmitter.on('connected', function() {
             node.status({fill:"green",shape:"dot",text:"connected"});
         });
-        node.server.client.on('end', function() {
+        node.server.eventEmitter.on('disconnected', function() {
             node.status({fill:"red",shape:"ring",text:"not connected"});
         });
-        
         node.on("close", function() {
             node.server.disconnect();
         });
@@ -135,33 +139,30 @@ module.exports = function(RED) {
         node.topic = n.topic;
         node.server = RED.nodes.getNode(n.server);
         node.status({fill:"red",shape:"ring",text:"not connected"});
-        
-        node.server.client.on('system', function(name) {
-            var msg = {};
-            msg.topic = node.topic;
-            msg.payload = {};
-            node.server.client.sendCommand(mpd.cmd("currentsong", []), function(err, message) {
-                if(err) {
-                    util.log('[MPD] - Error: ' + err);
-                }
-                msg.payload.currentsong = mpd.parseKeyValueMessage(message);
-                node.server.client.sendCommand(mpd.cmd('status', []), function(err, message) {
-                    if(err) {
-                        util.log('[MPD] - Error: ' + err);
+        node.server.eventEmitter.on('connected', function() {
+            node.server.client.on('system', function(name) {
+                var msg = {};
+                msg.topic = node.topic;
+                msg.payload = {};
+                node.server.client.sendCommand(mpd.cmd("currentsong", []), function(err, message) {
+                     if(err) {
+                        node.log('[MPD] - Error: ' + err);
                     }
-                    msg.payload.status = mpd.parseKeyValueMessage(message);
-                    node.send(msg);
+                    msg.payload.currentsong = mpd.parseKeyValueMessage(message);
+                    node.server.client.sendCommand(mpd.cmd('status', []), function(err, message) {
+                        if(err) {
+                            node.log('[MPD] - Error: ' + err);
+                        }
+                        msg.payload.status = mpd.parseKeyValueMessage(message);
+                        node.send(msg);
+                    });
                 });
             });
-        });
-        
-        node.server.client.on('ready', function() {
-            node.status({fill:"green",shape:"dot",text:"connected"});
-        });
-        node.server.client.on('end', function() {
+	    node.status({fill:"green",shape:"dot",text:"connected"});
+	});
+        node.server.eventEmitter.on('disconnected', function() {
             node.status({fill:"red",shape:"ring",text:"not connected"});
         });
-        
         node.on("close", function() {
             node.server.disconnect();
         });
