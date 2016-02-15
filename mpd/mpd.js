@@ -33,21 +33,18 @@ module.exports = function(RED) {
         node.connected = false;
         
         node.eventEmitter = new events.EventEmitter();
-    
-        connectToMPD(node);
+        
+        node.connect();
     }
     RED.nodes.registerType("mpd-server",MpdServerNode);
 
-    MpdServerNode.prototype.close = function() {
-        this.client.socket.destroy();
-        this.disconnect();
-    }
 
     MpdServerNode.prototype.disconnect = function() {
         var id = this.getID()
         if(connections[id] != null) {
             connections[id].instances -= 1;
             if(connections[id].instances == 0) {
+                connections[id].disconnecting = true;
                 connections[id].socket.destroy();
                 delete connections[id];
             }
@@ -58,7 +55,8 @@ module.exports = function(RED) {
         return "[" + this.host + ":" + this.port + "]";
     }
 
-    function connectToMPD(node) {
+    MpdServerNode.prototype.connect = function() {
+        var node = this;
         var id = node.getID();
         if(typeof connections[id] == "undefined" || connections[id] == null) {
             connections[id] = mpd.connect({port: node.port, host: node.host});
@@ -71,22 +69,24 @@ module.exports = function(RED) {
             connection.on('ready', function() {
                 node.log('Connected to MPD server ' + node.host + ':' + node.port);
                 node.connected = true;
+                node.disconnecting = false;
                 node.eventEmitter.emit('connected');
             });
             connection.on('end', function() {
-                node.log('Disconnected to MPD server '  + node.host + ':' + node.port);
-                node.connected = false;
-                node.eventEmitter.emit('disconnected');
-                setTimeout(function() {
-                    node.disconnect();
-                    connectToMPD(node);
-                }, 1000);
+                if(!connection.disconnecting) {
+                    node.log('Disconnected to MPD server '  + node.host + ':' + node.port);
+                    node.connected = false;
+                    node.eventEmitter.emit('disconnected');
+                    setTimeout(function() {
+                        node.disconnect();
+                        node.connect();
+                    }, 1000);
+                }
             });
         }
         connections[id].instances += 1;
         node.client = connections[id];
-    }
-    
+    }   
     
     
     //MPD out Node
