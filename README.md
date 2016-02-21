@@ -3,7 +3,8 @@ This is a node-red node for controlling one or multiple mpd-servers.
 If you don't know what mpd or node-red is, have a look at: [mpd](http://www.musicpd.org/), [node-red](http://nodered.org/).
 
 ## Installation
-In your node-red root directory run `npm install node-red-contrib-mpd`
+Run `npm install node-red-contrib-mpd` in your node-red user folder (usually $HOME/.node-red).
+Have a look at [adding nodes](http://nodered.org/docs/getting-started/adding-nodes.html)
 
 ## Features
 Provides two nodes. With the mpd-input node, everytime the status of the mpd server changes, this nodes constructs
@@ -20,6 +21,6 @@ If the command returns something, it will be available in the payload.
 Just specify the ip of your mpd-server and port in the config node.
  
 ## Todo
-- [ ] Timeout when connection lost
+- [x] Timeout when connection lost
 - [x] node status
 - [ ] more documentation, examples
