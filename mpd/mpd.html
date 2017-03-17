@@ -64,20 +64,19 @@
 </script>
 
 <script type="text/x-red" data-help-name="mpd out">
-    <p>A MPD output Node</p>
-    <p>Can be used to send commands to an MPD server. The Payload should be
-        a string of a mpd command without options.
-        See <a href='http://www.musicpd.org/doc/protocol/command_reference.html' target="_blank">MPD reference</a>
-        for details. If you want to send a command WITH options, the message
-        object should contain a property 'options', where you can define options. The option
-        property should be an array, containing the options.
-        The returned message from the mpd server (if there is one) is send in the payload with the specified topic.
+    <p>A Music Player Daemon output node</p>
+    <p> Send commands to a MPD server. The <code>msg.payload</code> specifies the desired mpd command. See <a href='http://www.musicpd.org/doc/protocol/command_reference.html' target="_blank">MPD reference</a>
+        for details.
+    </p>
+    <p> For complex commands with multiple options or file names, it is recommended to define the options in an array as <code>msg.options</code>
+    </p>
+    <p> If the command includes possible return messages from the server, those messages are send as an array to the output of the node.
     </p>
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('mpd out',{
-        category: 'output',      
+        category: 'MPD',      
         defaults: {            
             name: {value:""},   
             topic: {value:""},
@@ -92,7 +91,8 @@
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
-        }
+        },
+        paletteLabel: function() { return "MPD output"; }
     });
 </script>
 
@@ -118,15 +118,15 @@
 </script>
 
 <script type="text/x-red" data-help-name="mpd in">
-    <p>A MPD input Node</p>
+    <p>A Music Player Daemon input node</p>
     <p>
-        Whenever the status of the mpd server changes, this node outputs the status of the mpd server.
+        Whenever the status of the mpd server changes, information about the current played song is returned in <code>msg.payload.currentsong</code> and the status of the server in <code>msg.payload.status</code>.  
     </p>
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('mpd in',{
-        category: 'input',      
+        category: 'MPD',      
         defaults: {            
             name: {value:""},   
             topic: {value:""},
@@ -141,6 +141,7 @@
         },
         labelStyle: function() {
             return this.name?"node_label_italic":"";
-        }
+        },
+        paletteLabel: function() { return "MPD input"; }
     });
 </script>

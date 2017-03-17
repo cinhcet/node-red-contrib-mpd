@@ -97,21 +97,25 @@ module.exports = function(RED) {
         node.server = RED.nodes.getNode(n.server);
         node.status({fill:"red",shape:"ring",text:"not connected"});
         
-        node.on('input', function (msg) {
+        node.on('input', function (m) {
             if(node.server.connected) {
                 var options = [];
-                if(msg.options) {
-                    options = msg.options;
+                if(m.options) {
+                    options = m.options;
                 }
-                node.server.client.sendCommand(mpd.cmd(msg.payload, options), function(err, msg) {
+                node.server.client.sendCommand(mpd.cmd(m.payload, options), function(err, msg) {
                     if(err) {
                         node.log('[MPD] - ' + err);
                         return;
                     }
                     var message = {};
                     message.payload = mpd.parseArrayMessage(msg);
-                    message.topic = node.topic;
-                    if(message.payload) {
+                    if(node.topic.length) {
+                        message.topic = node.topic;
+                    } else if(m.topic) {
+                        message.topic = m.topic; 
+                    }
+                    if(message.payload /* && message.payload.length > 0 && Object.getOwnPropertyNames(message.payload[0]).length > 0*/) {
                         node.send(message);
                     }
                 });
