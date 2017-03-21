@@ -64,7 +64,7 @@ module.exports = function(RED) {
             connection.instances = 0;
             
             connection.on('error', function(err) { 
-                node.log('Error: Connetcion problem? Is the mpd-server '  + node.host + ':' + node.port + ' running? \n Error code: ' + err);
+                node.log('Error: Connection problem? Is the mpd-server '  + node.host + ':' + node.port + ' running? \n Error code: ' + err);
             });
             connection.on('ready', function() {
                 node.log('Connected to MPD server ' + node.host + ':' + node.port);
