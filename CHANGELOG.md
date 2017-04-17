@@ -1,3 +1,11 @@
+### 1.2.3
+
+**Fixes**
+- ensure event emitter accepts infinitely many nodes.
+
+**Changes**
+- new homemade icon.
+
 ### 1.2.0
 
 **Changes**

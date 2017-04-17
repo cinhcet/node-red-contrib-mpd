@@ -1,5 +1,5 @@
 /**
- * Copyright 2015 Danny Drieß, cinhcet@gmail.com
+ * Copyright 2015-2017 cinhcet@gmail.com
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,27 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  **/
- 
+
 module.exports = function(RED) {
     "use strict";
     var mpd = require('mpd');
     var events = require('events');
-     
-   
+
+
     //The connections to multiple mpd servers are stored here.
-    var connections = {}; 
-    
+    var connections = {};
+
     //The configuration node for the mpd server
     function MpdServerNode(n) {
         RED.nodes.createNode(this,n);
-        
+
         var node = this;
         node.host = n.host;
         node.port = n.port;
         node.connected = false;
-        
+
         node.eventEmitter = new events.EventEmitter();
-        
+        node.eventEmitter.setMaxListeners(0);
+
         node.connect();
     }
     RED.nodes.registerType("mpd-server",MpdServerNode);
@@ -62,8 +63,8 @@ module.exports = function(RED) {
             connections[id] = mpd.connect({port: node.port, host: node.host});
             var connection = connections[id];
             connection.instances = 0;
-            
-            connection.on('error', function(err) { 
+
+            connection.on('error', function(err) {
                 node.log('Error: Connection problem? Is the mpd-server '  + node.host + ':' + node.port + ' running? \n Error code: ' + err);
             });
             connection.on('ready', function() {
@@ -86,9 +87,9 @@ module.exports = function(RED) {
         }
         connections[id].instances += 1;
         node.client = connections[id];
-    }   
-    
-    
+    }
+
+
     //MPD out Node
     function MpdOutNode(n) {
         RED.nodes.createNode(this,n);
@@ -96,7 +97,7 @@ module.exports = function(RED) {
         node.topic = n.topic;
         node.server = RED.nodes.getNode(n.server);
         node.status({fill:"red",shape:"ring",text:"not connected"});
-        
+
         node.on('input', function (m) {
             if(node.server.connected) {
                 var options = [];
@@ -113,7 +114,7 @@ module.exports = function(RED) {
                     if(node.topic.length) {
                         message.topic = node.topic;
                     } else if(m.topic) {
-                        message.topic = m.topic; 
+                        message.topic = m.topic;
                     }
                     if(message.payload /* && message.payload.length > 0 && Object.getOwnPropertyNames(message.payload[0]).length > 0*/) {
                         node.send(message);
@@ -121,7 +122,7 @@ module.exports = function(RED) {
                 });
             }
         });
-        
+
         node.server.eventEmitter.on('connected', function() {
             node.status({fill:"green",shape:"dot",text:"connected"});
         });
@@ -133,9 +134,9 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("mpd out",MpdOutNode);
-    
-    
-    
+
+
+
     //Mpd in node
     function MpdInNode(n) {
         RED.nodes.createNode(this,n);
@@ -172,6 +173,6 @@ module.exports = function(RED) {
         });
     }
     RED.nodes.registerType("mpd in",MpdInNode);
-    
-    
+
+
 }

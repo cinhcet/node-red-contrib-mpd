@@ -1,5 +1,5 @@
 <!--
-  Copyright 2015 Danny Drieß, cinhcet@gmail.com
+  Copyright 2015-2017 cinhcet@gmail.com
 
   Licensed under the Apache License, Version 2.0 (the "License");
   you may not use this file except in compliance with the License.
@@ -46,7 +46,7 @@
 
 
 
-<!-- MPD Out Node --> 
+<!-- MPD Out Node -->
 
 <script type="text/x-red" data-template-name="mpd out">
     <div class="form-row">
@@ -76,9 +76,9 @@
 
 <script type="text/javascript">
     RED.nodes.registerType('mpd out',{
-        category: 'MPD',      
-        defaults: {            
-            name: {value:""},   
+        category: 'MPD',
+        defaults: {
+            name: {value:""},
             topic: {value:""},
             server: {value:"", type:"mpd-server"},
         },
@@ -100,7 +100,7 @@
 
 
 
-<!-- MPD In Node --> 
+<!-- MPD In Node -->
 
 <script type="text/x-red" data-template-name="mpd in">
     <div class="form-row">
@@ -120,15 +120,15 @@
 <script type="text/x-red" data-help-name="mpd in">
     <p>A Music Player Daemon input node</p>
     <p>
-        Whenever the status of the mpd server changes, information about the current played song is returned in <code>msg.payload.currentsong</code> and the status of the server in <code>msg.payload.status</code>.  
+        Whenever the status of the mpd server changes, information about the current played song is returned in <code>msg.payload.currentsong</code> and the status of the server in <code>msg.payload.status</code>.
     </p>
 </script>
 
 <script type="text/javascript">
     RED.nodes.registerType('mpd in',{
-        category: 'MPD',      
-        defaults: {            
-            name: {value:""},   
+        category: 'MPD',
+        defaults: {
+            name: {value:""},
             topic: {value:""},
             server: {value:"", type:"mpd-server"},
         },
