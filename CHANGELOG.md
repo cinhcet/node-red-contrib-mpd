@@ -1,3 +1,10 @@
+### 1.3.0
+
+**Changes**
+- complete message is passed through.
+- allow to output raw message in case the parser of the underlying library does fail.
+
+
 ### 1.2.3
 
 **Fixes**
