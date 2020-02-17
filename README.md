@@ -15,7 +15,7 @@ Provides two nodes, one for controlling and one for querying:
 - ```MPD input node```: everytime the status of the mpd server changes, this node constructs
 a message, which payload contains two objects. One serves the information about the current played song,
   the other contains the status of the mpd-server like stop, play etc.
-- ```MPD input node```: enables you to send any command to the mpd server. 
+- ```MPD output node```: enables you to send any command to the mpd server. 
 See [mpd command reference](http://www.musicpd.org/doc/protocol/command_reference.html) for details about possible commands.
 If the command returns something, it will be available in the payload as an array.
  
